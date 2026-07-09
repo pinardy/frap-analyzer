@@ -3,6 +3,7 @@ import { useFrapStore } from "../store/useFrapStore";
 export default function DisplaySettings() {
   const displayMin = useFrapStore((s) => s.displayMin);
   const displayMax = useFrapStore((s) => s.displayMax);
+  const displayCeiling = useFrapStore((s) => s.displayCeiling);
   const setDisplay = useFrapStore((s) => s.setDisplay);
 
   return (
@@ -17,29 +18,29 @@ export default function DisplaySettings() {
         <input
           type="range"
           min={0}
-          max={255}
+          max={displayCeiling}
           value={displayMin}
           onChange={(e) =>
             setDisplay(Math.min(Number(e.target.value), displayMax - 1), displayMax)
           }
         />
-        <span style={{ width: 30, textAlign: "right" }}>{displayMin}</span>
+        <span style={{ width: 44, textAlign: "right" }}>{displayMin}</span>
       </div>
       <div className="row">
         <label style={{ width: 34 }}>Max</label>
         <input
           type="range"
           min={0}
-          max={255}
+          max={displayCeiling}
           value={displayMax}
           onChange={(e) =>
             setDisplay(displayMin, Math.max(Number(e.target.value), displayMin + 1))
           }
         />
-        <span style={{ width: 30, textAlign: "right" }}>{displayMax}</span>
+        <span style={{ width: 44, textAlign: "right" }}>{displayMax}</span>
       </div>
       <div className="btn-row">
-        <button onClick={() => setDisplay(0, 255)}>Reset</button>
+        <button onClick={() => setDisplay(0, displayCeiling)}>Reset</button>
       </div>
     </div>
   );

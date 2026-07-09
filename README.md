@@ -8,8 +8,8 @@ analysis. It replaces the manual ImageJ workflow with a guided pipeline and runs
 
 **1. Load & Concatenate → 2. Align → 3. Calibrate → 4. ROIs → 5. Bleach frame → 6. Analyze → Export**
 
-1. **Load / Concatenate** — drop one or more 8-bit grayscale multi-page TIFF
-   stacks. Multiple files are concatenated into one chronological stack
+1. **Load / Concatenate** — drop one or more 8- or 16-bit grayscale multi-page
+   TIFF stacks. Multiple files are concatenated into one chronological stack
    (use *Sort by name* for natural order t1, t2, …, t10). Mirrors ImageJ
    *Image ▸ Stacks ▸ Concatenate*.
 2. **Align** — translation-only registration by FFT phase correlation to remove
@@ -59,8 +59,11 @@ npm run build    # type-check + production build
 
 ## Notes & limitations
 
-- Primary target is 8-bit grayscale TIFF; other bit depths/RGB are decoded to
-  8-bit grayscale for measurement.
+- 8- and 16-bit grayscale TIFFs are read at full precision (16-bit samples are
+  kept in a `Uint16Array`, not collapsed to 8 bits). RGB and other formats are
+  decoded to 8-bit grayscale for measurement. For 16-bit stacks the display
+  window auto-fits the data range so sub-range (e.g. 12-bit) captures aren't
+  rendered near-black; measurements always use the raw samples regardless.
 - The diffusion coefficient assumes a uniform circular bleach (Soumpasis
   approximation); rectangular bleach ROIs use an area-equivalent radius and are
   flagged.

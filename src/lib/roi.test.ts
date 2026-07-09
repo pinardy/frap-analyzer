@@ -3,7 +3,12 @@ import type { Frame, Roi } from "../types";
 import { effectiveRadiusPx, meanIntensity, pixelInRoi } from "./roi";
 
 function uniformFrame(w: number, h: number, value: number): Frame {
-  return { width: w, height: h, data: new Uint8Array(w * h).fill(value) };
+  return {
+    width: w,
+    height: h,
+    data: new Uint8Array(w * h).fill(value),
+    maxValue: 255,
+  };
 }
 
 describe("roi", () => {

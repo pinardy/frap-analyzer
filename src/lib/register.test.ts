@@ -21,7 +21,7 @@ function diskFrame(
       }
     }
   }
-  return { width: w, height: h, data };
+  return { width: w, height: h, data, maxValue: 255 };
 }
 
 describe("register", () => {
@@ -75,6 +75,7 @@ describe("register", () => {
       width: 4,
       height: 1,
       data: new Uint8Array([0, 100, 0, 0]),
+      maxValue: 255,
     };
     // shift content right by 0.5: output(x)=input(x-0.5)
     const out = shiftImage(f, 0.5, 0);

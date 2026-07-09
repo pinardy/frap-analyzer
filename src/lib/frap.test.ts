@@ -4,7 +4,12 @@ import { computeMeasurements, detectBleachFrame, type RoiSet } from "./frap";
 
 // 3x1 frames: pixel0=bleach, pixel1=background, pixel2=reference.
 function f(bleach: number, bg: number, ref: number): Frame {
-  return { width: 3, height: 1, data: new Uint8Array([bleach, bg, ref]) };
+  return {
+    width: 3,
+    height: 1,
+    data: new Uint8Array([bleach, bg, ref]),
+    maxValue: 255,
+  };
 }
 
 const rois: RoiSet = {

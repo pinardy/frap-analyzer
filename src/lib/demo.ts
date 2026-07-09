@@ -130,7 +130,7 @@ export function makeDemoData(params: DemoParams = {}): DemoData {
         data[y * width + x] = Math.max(0, Math.min(255, Math.round(val)));
       }
     }
-    frames.push({ width, height, data });
+    frames.push({ width, height, data, maxValue: 255 });
   }
 
   return {

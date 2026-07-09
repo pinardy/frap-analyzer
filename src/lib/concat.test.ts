@@ -3,7 +3,12 @@ import type { Frame, SourceFile } from "../types";
 import { concatSources, naturalCompare, sortSourcesByName } from "./concat";
 
 function frame(w: number, h: number, fill = 0): Frame {
-  return { width: w, height: h, data: new Uint8Array(w * h).fill(fill) };
+  return {
+    width: w,
+    height: h,
+    data: new Uint8Array(w * h).fill(fill),
+    maxValue: 255,
+  };
 }
 
 function source(name: string, count: number, w = 8, h = 8): SourceFile {

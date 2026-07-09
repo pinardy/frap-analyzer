@@ -95,8 +95,11 @@ export function estimateShift(
 /** Shift a frame so output(x,y) = input(x - dx, y - dy); zero-fill outside.
  * Integer shifts copy exactly; fractional shifts use bilinear interpolation. */
 export function shiftImage(frame: Frame, dx: number, dy: number): Frame {
-  const { width, height, data } = frame;
-  const out = new Uint8Array(width * height);
+  const { width, height, data, maxValue } = frame;
+  const out =
+    data instanceof Uint16Array
+      ? new Uint16Array(width * height)
+      : new Uint8Array(width * height);
   const integer = Number.isInteger(dx) && Number.isInteger(dy);
 
   if (integer) {
@@ -109,7 +112,7 @@ export function shiftImage(frame: Frame, dx: number, dy: number): Frame {
         out[y * width + x] = data[sy * width + sx];
       }
     }
-    return { width, height, data: out };
+    return { width, height, data: out, maxValue };
   }
 
   for (let y = 0; y < height; y++) {
@@ -129,11 +132,11 @@ export function shiftImage(frame: Frame, dx: number, dy: number): Frame {
       out[y * width + x] = Math.round(top * (1 - wy) + bot * wy);
     }
   }
-  return { width, height, data: out };
+  return { width, height, data: out, maxValue };
 }
 
 function sample(
-  data: Uint8Array,
+  data: Uint8Array | Uint16Array,
   w: number,
   h: number,
   x: number,
@@ -162,13 +165,16 @@ function autoCropStack(frames: Frame[], shifts: FrameShift[]): Frame[] {
   const ch = Math.max(1, bottom - top);
   if (cw === w && ch === h) return frames;
   return frames.map((f) => {
-    const data = new Uint8Array(cw * ch);
+    const data =
+      f.data instanceof Uint16Array
+        ? new Uint16Array(cw * ch)
+        : new Uint8Array(cw * ch);
     for (let y = 0; y < ch; y++) {
       for (let x = 0; x < cw; x++) {
         data[y * cw + x] = f.data[(y + top) * w + (x + left)];
       }
     }
-    return { width: cw, height: ch, data };
+    return { width: cw, height: ch, data, maxValue: f.maxValue };
   });
 }
 

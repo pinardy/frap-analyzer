@@ -1,12 +1,16 @@
 // Core data types for the FRAP analysis pipeline.
 
 /** A single grayscale image frame (one timepoint). `data` holds the raw
- * 8-bit sample values (length = width*height) used for all measurements —
- * never the display-adjusted pixels. */
+ * sample values (length = width*height) used for all measurements —
+ * never the display-adjusted pixels. 8-bit images use a Uint8Array; 16-bit
+ * images keep full precision in a Uint16Array. */
 export interface Frame {
   width: number;
   height: number;
-  data: Uint8Array; // grayscale samples, row-major, length width*height
+  data: Uint8Array | Uint16Array; // grayscale samples, row-major, length width*height
+  /** white-point ceiling for this frame's bit depth: 255 for 8-bit, 65535 for
+   * 16-bit. Bounds the display window; measurements use the raw samples. */
+  maxValue: number;
 }
 
 /** A decoded source file: its pages become consecutive frames. */

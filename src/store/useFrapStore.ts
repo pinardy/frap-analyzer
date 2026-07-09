@@ -17,6 +17,7 @@ import { computeMeasurements, detectBleachFrame, type RoiSet } from "../lib/frap
 import { fitRecovery } from "../lib/fit";
 import { diffusionCoefficient } from "../lib/diffusion";
 import { umPerPixelFromLine } from "../lib/calibration";
+import { displayWindowFor } from "../lib/tiff";
 import { makeDemoData } from "../lib/demo";
 
 export type Tool = "none" | "bleach" | "background" | "reference" | "scale";
@@ -30,6 +31,7 @@ interface FrapState {
   currentFrame: number;
   displayMin: number;
   displayMax: number;
+  displayCeiling: number; // slider max for the loaded bit depth (255 or 65535)
   showRaw: boolean; // in AlignPanel: view pre-alignment frames
 
   calibration: Calibration;
@@ -86,6 +88,7 @@ export const useFrapStore = create<FrapState>((set, get) => ({
   currentFrame: 0,
   displayMin: 0,
   displayMax: 255,
+  displayCeiling: 255,
   showRaw: false,
 
   calibration: { ...initialCalibration },
@@ -116,11 +119,15 @@ export const useFrapStore = create<FrapState>((set, get) => ({
   concatenate: () => {
     try {
       const frames = concatSources(get().sources);
+      const win = displayWindowFor(frames);
       set({
         frames,
         aligned: null,
         shifts: null,
         currentFrame: 0,
+        displayMin: win.min,
+        displayMax: win.max,
+        displayCeiling: win.ceiling,
         measurements: null,
         fit: null,
         diffusion: null,
@@ -265,6 +272,7 @@ export const useFrapStore = create<FrapState>((set, get) => ({
       currentFrame: 0,
       displayMin: 0,
       displayMax: 255,
+      displayCeiling: 255,
       calibration: demo.calibration,
       rois: {
         bleach: demo.bleachRoi,
@@ -291,6 +299,7 @@ export const useFrapStore = create<FrapState>((set, get) => ({
       currentFrame: 0,
       displayMin: 0,
       displayMax: 255,
+      displayCeiling: 255,
       calibration: { ...initialCalibration },
       rois: {},
       activeTool: "none",
